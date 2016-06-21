@@ -1,0 +1,304 @@
+<div id="content">
+
+</div>
+<div id="searchHeader">
+
+</div>
+<div id="neighborhood">
+
+</div>
+<div id="deal">
+
+</div>
+<div id="time">
+
+</div>
+<div id="day">
+
+</div>
+<div id="restaurantName">
+
+</div>
+
+<div id="searchResults">
+
+</div>
+
+<div id="addRestaurant">
+
+</div>
+
+<div id="addRestaurantForm">
+
+</div>
+
+<div id="addRestaurantConfirmation">
+
+</div>
+
+<div id="addDeal">
+
+</div>
+
+<div id="addDealForm">
+
+</div>
+
+      <script>
+         $('#content').load('htmlPartials/content.html .header');
+
+          $('#searchHeader').load('htmlPartials/content.html #searchHeader');
+
+         $('#neighborhood').load('htmlPartials/content.html #neighborhoodSearch', function(){
+         		 $('#neighborhoodSubmit').click(function(event){
+		         	event.preventDefault();
+		         	var search = $('input[name=neighborhood]').val();
+		           
+		           $.ajax({
+		             type : 'GET',
+		             url : '/locations/neighborhood/'+search,
+		             dataType : 'JSON',
+		             success : successTest2
+		           }).fail(function(){
+		             console.log('failed');
+		           });
+		         });
+
+         });
+
+         $('#deal').load('htmlPartials/content.html #dealSearch', function(){
+         			 $('#dealSubmit').click(function(event){
+		         	event.preventDefault();
+		         	var search = $('input[name=deal]').val();
+		           
+		           $.ajax({
+		             type : 'GET',
+		             url : '/locations/deal/'+search,
+		             dataType : 'JSON',
+		             success : successTest
+		           }).fail(function(){
+		             console.log('failed');
+		           });
+		         });
+
+         });
+
+         $('#time').load('htmlPartials/content.html #timeSearch', function() {
+         	   	$('#timeSubmit').click(function(event){
+		         	event.preventDefault();
+		         	var search = $('input[name=time]').val();
+		           
+		           $.ajax({
+		             type : 'GET',
+		             url : '/locations/time/'+search,
+		             dataType : 'JSON',
+		             success : successTest
+		           }).fail(function(){
+		             console.log('failed');
+		           });
+		         });
+
+         });
+
+         $('#day').load('htmlPartials/content.html #daySearch', function() {
+         		$('#daySubmit').click(function(event){
+		         	event.preventDefault();
+		         	var search = $('input[name=day]').val();
+		           
+		           $.ajax({
+		             type : 'GET',
+		             url : '/locations/day/'+search,
+		             dataType : 'JSON',
+		             success : successTest
+		           }).fail(function(){
+		             console.log('failed');
+		           });
+		         });
+
+         });
+
+         $('#restaurantName').load('htmlPartials/content.html #nameSearch' , function() {
+         	$('#nameSubmit').click(function(event){
+		         	event.preventDefault();
+		         	var search = $('input[name=name]').val();
+		           
+		           $.ajax({
+		             type : 'GET',
+		             url : '/locations/name/'+search,
+		             dataType : 'JSON',
+		             success : successTest2
+		           }).fail(function(){
+		             console.log('failed');
+		           });
+		         });
+
+         });
+
+         $('#addRestaurant').load('htmlPartials/content.html #submitRestaurant' , function() {
+         	$('#submitRestaurant').click(function() {
+         		console.log("loaded form");
+         		$('#addRestaurantForm').load('htmlPartials/content.html #newRestaurant', function() {
+         			$('#restaurantSubmit').click(function(event) {
+         				event.preventDefault();
+         				console.log("default was prevented");
+         				$.ajax({
+         					type : 'POST',
+         					url : '/locations/',
+         					dataType : 'JSON',
+         					data : {
+         						name : $('input[name=restaurantName]').val(),
+         						address : 
+         							{   street : $('input[name=street]').val() , city : $('input[name=city]').val() ,
+         								state : $('input[name=state]').val() 
+         							},
+         						neighborhood : $('input[name=neighborhood]').val(),
+         						owner : $('input[name=owner]').val()
+         					},
+         					success : newRestaurant
+         				}).fail(function() {
+         					console.log('failed');
+         				})
+
+         			})
+         		})
+         			
+         	
+         	})
+         });
+
+         $('#addDeal').load('htmlPartials/content.html #submitDeal', function() {
+         	$('#submitDeal').click(function() {
+         		$('#addDealForm').load('htmlPartials/content.html #newDeal', function() {
+         			$('#dealSubmitButton').click(function(event) {
+         				event.preventDefault();
+         				console.log('default was prevented');
+         				var restaurantName = $('input[name=restaurantName]').val();
+         				console.log("THis is what I have for the restaurant name" + restaurantName);
+         					$.ajax({
+         					type : 'POST',
+         					url : '/locations/addDeal/'+restaurantName,
+         					dataType : 'JSON',
+         					data : {
+         						dealType : $('input[name=dealType]').val(),
+         						description : $('input[name=description]').val(),
+         						time : $('input[name=time]').val(),
+         						days : $('input[name=days]').val()
+         					},
+         					success : newDeal
+         				}).fail(function() {
+         					console.log('failed');
+         				})
+         			})
+         		});
+         		//console.log("also clicked");
+         	})
+         });
+
+  
+         function successTest(data){
+         	console.log("made it into success test");
+         	console.log(data);
+	          var $ul = $('<ul>');
+	           data.forEach(function(elem, index){
+	             var $li = $('<li>' + index + '</li>');
+	             var elemUL = $('<ul>');
+	             for(p in elem){
+	             	if(p == "deal") {
+	             		for (var i = 0; i < elem[p].length; i++) {	
+	             			console.log("THIS IS WHAT'S PRINTING");
+	             			console.log(elem[p][i].days);
+	             			console.log(elem[p][i].time);
+	             			console.log(elem[p][i].description);
+	             			console.log(elem[p][i].dealType);
+	             		}
+	             	}
+	             	if(p == "address") {
+	             		console.log("IN ADDRESS LOOP 1")
+	             		console.log(elem[p].street);
+	             		console.log(elem[p].zip);
+	             		console.log(elem[p].city);
+	             		console.log(elem[p].state);
+
+	             	}
+
+	               var elemLI= $('<li>');
+	               elemLI.text(p + " : " + elem[p]);
+	               elemUL.append(elemLI);
+	             }
+	             $li.append(elemUL);
+	             $ul.append($li);
+	           });
+	           $('#searchResults').append($ul);
+         }
+
+                function successTest2(data){
+         	console.log("made it into success test");
+         	console.log(data);
+         	var restaurant = [];
+	          
+	           data.forEach(function(elem, index){
+	           
+	             for(p in elem){
+	             	if (p != "deal") {
+	             		restaurant.push(p + " : " + elem[p] + " ");
+	             	}
+
+	             	if(p == "deal") {
+	             		for (var i = 0; i < elem[p].length; i++) {	
+	             			console.log("THIS IS WHAT'S PRINTING");
+	             			restaurant.push("Deals ");
+	             			restaurant.push(elem[p][i].days + " ");
+	             			restaurant.push(elem[p][i].time + " ");
+	             			restaurant.push(elem[p][i].description + " ");
+	             			restaurant.push(elem[p][i].dealType + " ");
+	             			console.log(elem[p][i].days);
+	             			console.log(elem[p][i].time);
+	             			console.log(elem[p][i].description);
+	             			console.log(elem[p][i].dealType);
+	             		}
+	             	}
+	             	 if(p == "address") {
+	             		console.log("IN ADDRESS LOOP 1")
+	             		restaurant.push("Address ");
+	             		restaurant.push(elem[p].street + " ");
+	             		restaurant.push(elem[p].zip + " ");
+	             		restaurant.push(elem[p].city + " ");
+	             		restaurant.push(elem[p].state + " ");
+
+	             		console.log(elem[p].street);
+	             		console.log(elem[p].zip);
+	             		console.log(elem[p].city);
+	             		console.log(elem[p].state);
+
+	             	}
+	             	
+	             	restaurant.push("\t");
+
+	              
+	             }
+	          
+	           });
+	           $('#searchResults').append(restaurant);
+         }
+
+         function newRestaurant(data){
+         	$('#addRestaurantConfirmation').append('<h3> You just added a place to our list - thanks so much! Want to add a deal below?</h3>');
+         	var $p = $('<p>');
+         	var text = [];
+
+         	for(p in data){
+         		if(p == "name" || p == "neighborhood" || p == "address") {
+         			text.push(p + " : " + data[p] + " ");
+	           		}
+	           		console.log(p + " : " + data[p]);
+	             }
+	        $('#addRestaurantConfirmation').append(text);    
+         }
+
+         function newDeal(data) {
+         	for(p in data) {
+         		console.log(p + " : " + data[p]);
+         	}
+         }
+      
+      </script>
