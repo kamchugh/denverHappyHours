@@ -1,0 +1,29 @@
+#searchContainer {
+text-align: center;
+
+
+}
+
+#headerContainer {
+text-align: center;
+
+}
+
+#addContainer {
+text-align: center;
+
+}
+
+input[type=text] {
+	margin-top: 10px;
+	margin-right : 10px;
+	padding: 5px;
+}
+
+input[id=restaurantSubmit], input[id=dealSubmit]  {
+	margin-top: 20px;
+}
+
+.navbar {
+	margin-top : 20px;
+}
