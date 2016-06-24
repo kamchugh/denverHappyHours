@@ -1,12 +1,64 @@
 #searchContainer {
 text-align: center;
+}
 
+#searchResults {
+	margin: 0 auto;
+	position: relative;
 
 }
 
-#headerContainer {
-text-align: center;
+[li~=DEAL] { 
+    background-color: yellow;
+}
 
+#searchResults ul > li > ul >li {
+	color : red;
+	list-style-type: none;
+}
+
+#searchResults ul > li:first-child {
+	color : blue;
+	font-size: 20px;
+	list-style-type: none;
+}
+
+#searchResults ul {
+	list-style-type: none;
+
+}
+#searchResultsContainer {
+	justify-content: center;
+	 display: flex;
+}
+
+#headerContainer {
+  opacity: 0.5;
+ background-image: url("https://static.pexels.com/photos/6506/alcohol-bar-drinks-party.jpg");
+background-repeat: no-repeat;
+	padding: 10px 10px 75px 10px;
+	background-size: 100%;
+	background-attachment: fixed;
+	
+	height : 400px;
+	color : black;
+	z-index : -100;
+	 position:relative;
+}
+
+#content {
+	text-align: center;
+	padding: 60px 20px 150px 20px;
+	opacity: 1;
+	z-index : 100;
+	margin-top: -400px;
+	margin-bottom: 175px;
+	
+
+}
+
+#nameSearch {
+	margin-bottom: 20px;
 }
 
 #addContainer {
@@ -26,4 +78,8 @@ input[id=restaurantSubmit], input[id=dealSubmit]  {
 
 .navbar {
 	margin-top : 20px;
+}
+
+li, ul {
+	/*list-style-type: none;*/
 }

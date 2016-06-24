@@ -99,8 +99,11 @@ module.exports.showByDeal = function(req,res,next) {
 
 module.exports.showByDealTime = function(req,res,next) {
   var match = req.params.time
+var tokens = match.split("-");
+console.log(tokens[0])
+console.log(tokens[1])
   console.log(match)
-  HHLocation.find({deal : {$elemMatch : {time : match}}} , function(err,HHlocation){
+  HHLocation.find({deal : {$elemMatch : {time : { $gte: tokens[0], $lt: tokens[1] }}}} , function(err,HHlocation){
     if (err) return next(err);
     res.json(HHlocation);
   });
@@ -110,7 +113,7 @@ module.exports.showByDealTime = function(req,res,next) {
 
 module.exports.showByDay = function(req,res,next) {
   var match = req.params.day
-  HHLocation.find({deal : {$elemMatch : {days : {$regex:"/match/"}}}} , function(err,HHlocation){
+  HHLocation.find({deal : {$elemMatch : {"days" : {$regex : ".*" + req.params.day + ".*"}}}} , function(err,HHlocation){
     if (err) return next(err);
     res.json(HHlocation);
   });
@@ -129,6 +132,12 @@ module.exports.showByName = function(req,res,next) {
 
 module.exports.addDeal = function(req,res,next){
   console.log("In add deal function");
+  var deal = [];
+  deal.push("At " + req.params.name);
+  deal.push(" for " + req.body.dealType + ". ");
+  deal.push(req.body.description + " between ");
+  deal.push(req.body.time + " on ");
+  deal.push(req.body.days + ". ");
 
        HHLocation.update(
         {name : req.params.name},
@@ -137,7 +146,7 @@ module.exports.addDeal = function(req,res,next){
       }
       , function(err, result) {
         if (err) return next(err);
-        res.json(result);
+        res.json(deal);
       })
      
     

@@ -18,14 +18,18 @@
 <!-- navbar is above  -->
 
 <div id="headerContainer">
-	<div id="content">
-
-	</div>
-	<div id="searchHeader">
-
-	</div>
+	
 </div>
+
+<div id="content">
+
+</div>
+
 <div id="searchContainer">
+	<div id="searchHeader">
+	</div>
+
+
 	<div id="neighborhood">
 
 	</div>
@@ -41,11 +45,13 @@
 	<div id="restaurantName">
 
 	</div>
-
+</div>
+<div id="searchResultsContainer">
 	<div id="searchResults">
 
 	</div>
 </div>
+
 <div id="addContainer">
 
 	<div id="addRestaurant">
@@ -67,6 +73,10 @@
 	<div id="addDealForm">
 
 	</div>
+
+	<div id="addDealConfirmation">
+
+	</div>
 </div>
 
 <!-- footer is below -->
@@ -85,6 +95,7 @@
 
          $('#neighborhood').load('htmlPartials/content.html #neighborhoodSearch', function(){
          		 $('#neighborhoodSubmit').click(function(event){
+
 		         	event.preventDefault();
 		         	var search = $('input[name=neighborhood]').val();
 		           
@@ -92,7 +103,7 @@
 		             type : 'GET',
 		             url : '/locations/neighborhood/'+search,
 		             dataType : 'JSON',
-		             success : successTest2
+		             success : successTest
 		           }).fail(function(){
 		             console.log('failed');
 		           });
@@ -160,7 +171,7 @@
 		             type : 'GET',
 		             url : '/locations/name/'+search,
 		             dataType : 'JSON',
-		             success : successTest2
+		             success : successTest
 		           }).fail(function(){
 		             console.log('failed');
 		           });
@@ -174,6 +185,7 @@
          		$('#addRestaurantForm').load('htmlPartials/content.html #newRestaurant', function() {
          			$('#restaurantSubmit').click(function(event) {
          				event.preventDefault();
+         				console.log("this is what I have for the neighborhood" + $('input[name=neighborhoodName]').val() );
          				console.log("default was prevented");
          				$.ajax({
          					type : 'POST',
@@ -183,9 +195,11 @@
          						name : $('input[name=restaurantName]').val(),
          						address : 
          							{   street : $('input[name=street]').val() , city : $('input[name=city]').val() ,
-         								state : $('input[name=state]').val() 
+         								state : $('input[name=state]').val(),
+         								zip : $('input[name=zip]').val()
+
          							},
-         						neighborhood : $('input[name=neighborhood]').val(),
+         						neighborhood : $('input[name=neighborhoodName]').val(),
          						owner : $('input[name=owner]').val()
          					},
          					success : newRestaurant
@@ -208,6 +222,7 @@
          				console.log('default was prevented');
          				var restaurantName = $('input[name=restaurantName]').val();
          				console.log("THis is what I have for the restaurant name" + restaurantName);
+         				console.log("this is what I have for the time" + $('input[name=timeOfDay]').val() );
          					$.ajax({
          					type : 'POST',
          					url : '/locations/addDeal/'+restaurantName,
@@ -215,7 +230,7 @@
          					data : {
          						dealType : $('input[name=dealType]').val(),
          						description : $('input[name=description]').val(),
-         						time : $('input[name=time]').val(),
+         						time : $('input[name=timeOfDay]').val(),
          						days : $('input[name=days]').val()
          					},
          					success : newDeal
@@ -232,37 +247,84 @@
          function successTest(data){
          	console.log("made it into success test");
          	console.log(data);
-	          var $ul = $('<ul>');
+         	 $('#searchResults').empty();
+
+         	var restaurant = [];
+	          // var $ul = $('<ul>');
 	           data.forEach(function(elem, index){
-	             var $li = $('<li>' + index + '</li>');
+
+	             // var $li = $('<li>');
 	             var elemUL = $('<ul>');
 	             for(p in elem){
-	             	if(p == "deal") {
+	             	if (p != "_id") {
+	             		if (p != "owner") {
+	             			if(p != "__v") {
+	             				if(p != "deal") {
+	             					if(p != "address") {
+						               var elemLI= $('<li>');
+						               elemLI.text(p + " : " + elem[p]);
+						               elemUL.append(elemLI);
+				               		}
+				           		}	
+	               			}
+	               		}
+	           		}
+	      
+	           		if(p == "deal") {
+	           			var dealUL = $('<ul>');
 	             		for (var i = 0; i < elem[p].length; i++) {	
+	             			var dealHeaderLI = $('<li>');
+	             			var daysLI = $('<li>');
+	             			var timeLI = $('<li>');
+	             			var descriptionLI = $('<li>');
+	             			var dealTypeLI = $('<li>');
+	             			dealHeaderLI.text("DEAL");
+	             			daysLI.text(elem[p][i].days + " ");
+	             			timeLI.text(elem[p][i].time + " ");
+	             			descriptionLI.text(elem[p][i].description + " ");
+	             			dealHeaderLI.css('background-color' , 'yellow');
+	             			dealHeaderLI.css('color' , 'black');
+	             			dealHeaderLI.css('font-size' , '20px');
+	             			dealTypeLI.text(elem[p][i].dealType + " ");
+	             			dealUL.append(dealHeaderLI);
+	             			dealUL.append(daysLI);
+	             			dealUL.append(timeLI);
+	             			dealUL.append(descriptionLI);
+	             			// dealUL.append(dealTypeLI);
+	             			elemLI.append(dealUL);
+	             			elemUL.append(elemLI);
 	             			console.log("THIS IS WHAT'S PRINTING");
-	             			console.log(elem[p][i].days);
-	             			console.log(elem[p][i].time);
-	             			console.log(elem[p][i].description);
-	             			console.log(elem[p][i].dealType);
 	             		}
 	             	}
-	             	if(p == "address") {
-	             		console.log("IN ADDRESS LOOP 1")
-	             		console.log(elem[p].street);
-	             		console.log(elem[p].zip);
-	             		console.log(elem[p].city);
-	             		console.log(elem[p].state);
 
+	           		if(p == "address") {
+	           			var address = [];
+	           			
+	             		for (var i = 0; i < elem[p].length; i++) {	
+	             			
+	             			address.push(elem[p][i].street + " ");
+	             			address.push(elem[p][i].city + " ");
+	             			//address.push(elem[p][i].state + " ");
+	             			// // dealHeaderLI.css('background-color' , 'yellow');
+	             			// // dealHeaderLI.css('color' , 'black');
+	             			// // dealHeaderLI.css('font-size' , '20px');
+	             			address.push(elem[p][i].zip + " ");
+	             		
+	             			elemUL.append(address);
+	             			console.log("THIS IS WHAT'S PRINTING");
+	             		}
 	             	}
+	      
 
-	               var elemLI= $('<li>');
-	               elemLI.text(p + " : " + elem[p]);
-	               elemUL.append(elemLI);
+
 	             }
-	             $li.append(elemUL);
-	             $ul.append($li);
+	             $('#searchResults').append(elemUL);
+	             // $li.append(elemUL);
+	             
+	             // $ul.append($li);
 	           });
-	           $('#searchResults').append($ul);
+				// $('#searchResults').append(restaurant);
+	           // $('#searchResults').append(elemUL);
          }
 
                 function successTest2(data){
@@ -316,23 +378,48 @@
          }
 
          function newRestaurant(data){
+         	$( '#addRestaurantForm' ).empty();
+         	$( '#addRestaurantConfirmation' ).empty();
          	$('#addRestaurantConfirmation').append('<h3> You just added a place to our list - thanks so much! Want to add a deal below?</h3>');
          	var $p = $('<p>');
          	var text = [];
 
          	for(p in data){
-         		if(p == "name" || p == "neighborhood" || p == "address") {
+         		if(p == "name" || p == "neighborhood") {
          			text.push(p + " : " + data[p] + " ");
 	           		}
+	           		 //  	if(p == "address") {
+	           			// var addressUL = $('<ul>');
+	             	// 	for (var i = 0; i < data[p].length; i++) {	
+	             	// 		var addressHeaderLI = $('<li>');
+	             	// 		var streetLI = $('<li>');
+	             	// 		var cityLI = $('<li>');
+	             	// 		var stateLI = $('<li>');
+	             	// 		var zipLI = $('<li>');
+	             	// 		addressHeaderLI.text("DEAL");
+	             	// 		streetLI.text(data[p][i].street + " ");
+	             	// 		cityLI.text(data[p][i].city + " ");
+	             	// 		stateLI.text(data[p][i].state + " ");
+	             	// 		zipLI.text(data[p][i].zip + " ");
+	             	// 		dealUL.append(addressHeaderLI);
+	             	// 		dealUL.append(streetLI);
+	             	// 		dealUL.append(cityLI);
+	             	// 		dealUL.append(zipLI);
+	            
+	             	// 	}
+	             	// }
 	           		console.log(p + " : " + data[p]);
 	             }
-	        $('#addRestaurantConfirmation').append(text);    
+	        $('#addRestaurantConfirmation').append(text);  
+	        // $('#addRestaurantConfirmation').append(addressUL);   
          }
 
          function newDeal(data) {
-         	for(p in data) {
-         		console.log(p + " : " + data[p]);
-         	}
+         	$( '#addDealForm' ).empty();
+         	$( '#addDealConfirmation' ).empty();
+         	$('#addDealConfirmation').append('<h3> You just added a deal to to our list - thanks so much!</h3>');
+         	
+         	$('#addDealConfirmation').append(data);
          }
       
       </script>
